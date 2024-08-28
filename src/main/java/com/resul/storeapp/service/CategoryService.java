@@ -24,7 +24,7 @@ public class CategoryService {
     }
 
     public CategoryDto findById(Long id) {
-        var category = getCategoryById(id);
+        var category = getCategory(id);
         return categoryMapper.toDto(category);
     }
 
@@ -35,17 +35,17 @@ public class CategoryService {
     }
 
     public void update(Long id, UpdateCategoryDto updateCategoryDto) {
-        var categoryEntity = getCategoryById(id);
+        var categoryEntity = getCategory(id);
         categoryMapper.toCategoryEntity(updateCategoryDto, categoryEntity);
         categoryRepository.save(categoryEntity);
     }
 
     public void delete(Long id) {
-        var categoryEntity = getCategoryById(id);
+        var categoryEntity = getCategory(id);
         categoryRepository.delete(categoryEntity);
     }
 
-    private CategoryEntity getCategoryById(Long id) {
+    private CategoryEntity getCategory(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + id));
     }

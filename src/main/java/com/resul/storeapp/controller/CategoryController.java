@@ -28,19 +28,19 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createCategory(@RequestBody CreateCategoryDto createCategoryDto) {
+    public ResponseEntity<Void> create(@RequestBody CreateCategoryDto createCategoryDto) {
         categoryService.create(createCategoryDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCategory(@PathVariable Long id, @RequestBody UpdateCategoryDto updateCategoryDto) {
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody UpdateCategoryDto updateCategoryDto) {
         categoryService.update(id, updateCategoryDto);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }

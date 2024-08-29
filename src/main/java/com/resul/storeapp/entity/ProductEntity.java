@@ -36,7 +36,7 @@ public class ProductEntity {
     private Instant updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
 }

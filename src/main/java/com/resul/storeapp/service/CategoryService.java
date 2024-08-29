@@ -1,5 +1,6 @@
 package com.resul.storeapp.service;
 
+import com.resul.storeapp.CategoryManager;
 import com.resul.storeapp.dto.CategoryDto;
 import com.resul.storeapp.dto.CreateCategoryDto;
 import com.resul.storeapp.dto.UpdateCategoryDto;
@@ -17,6 +18,7 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final CategoryManager categoryManager;
 
     public List<CategoryDto> findAll() {
         var categories = categoryRepository.findAllAndIsActive(true);
@@ -24,7 +26,7 @@ public class CategoryService {
     }
 
     public CategoryDto findById(Long id) {
-        var category = getCategory(id);
+        var category = categoryManager.getCategory(id);
         return categoryMapper.toDto(category);
     }
 
@@ -35,18 +37,14 @@ public class CategoryService {
     }
 
     public void update(Long id, UpdateCategoryDto updateCategoryDto) {
-        var categoryEntity = getCategory(id);
+        var categoryEntity = categoryManager.getCategory(id);
         categoryMapper.toCategoryEntity(updateCategoryDto, categoryEntity);
         categoryRepository.save(categoryEntity);
     }
 
     public void delete(Long id) {
-        var categoryEntity = getCategory(id);
+        var categoryEntity = categoryManager.getCategory(id);
         categoryRepository.delete(categoryEntity);
     }
 
-    private CategoryEntity getCategory(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + id));
-    }
 }

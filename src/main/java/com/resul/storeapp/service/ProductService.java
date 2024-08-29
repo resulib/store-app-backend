@@ -1,5 +1,6 @@
 package com.resul.storeapp.service;
 
+import com.resul.storeapp.CategoryManager;
 import com.resul.storeapp.dto.CreateProductDto;
 import com.resul.storeapp.dto.ProductDto;
 import com.resul.storeapp.dto.UpdateProductDto;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final CategoryManager categoryManager;
 
     public List<ProductDto> findAll() {
         var products = productRepository.findAll();
@@ -30,11 +32,15 @@ public class ProductService {
 
     public void create(CreateProductDto createProductDto) {
         var productEntity = productMapper.toProductEntity(createProductDto);
+        var category = categoryManager.getCategory(createProductDto.getCategoryId());
+        productEntity.setCategory(category);
         productRepository.save(productEntity);
     }
 
     public void update(Long id, UpdateProductDto updateProductDto) {
         var productEntity = getProduct(id);
+        var category = categoryManager.getCategory(updateProductDto.getCategoryId());
+        productEntity.setCategory(category);
         productMapper.toProductEntity(updateProductDto, productEntity);
         productRepository.save(productEntity);
     }
@@ -48,5 +54,15 @@ public class ProductService {
     private ProductEntity getProduct(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+    }
+
+    public List<ProductDto> findAllByCategory(Long category) {
+        var products = productRepository.findAllByCategoryId(category);
+        return productMapper.toProductDtoList(products);
+    }
+
+    public List<ProductDto> search(String query) {
+        var products = productRepository.search(query);
+        return productMapper.toProductDtoList(products);
     }
 }

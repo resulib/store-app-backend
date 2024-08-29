@@ -6,8 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -22,7 +21,7 @@ public class CategoryEntity {
     private String name;
     private boolean isActive;
 
-    @OneToMany(mappedBy = "category")
-    private Set<ProductEntity> products = new HashSet<>();
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ProductEntity> products;
 
 }

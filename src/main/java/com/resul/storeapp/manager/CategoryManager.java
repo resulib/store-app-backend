@@ -1,9 +1,8 @@
-package com.resul.storeapp;
+package com.resul.storeapp.manager;
 
 import com.resul.storeapp.entity.CategoryEntity;
 import com.resul.storeapp.exception.CategoryNotFoundException;
 import com.resul.storeapp.repository.CategoryRepository;
-import jdk.jfr.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

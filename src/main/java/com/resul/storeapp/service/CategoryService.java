@@ -1,14 +1,14 @@
 package com.resul.storeapp.service;
 
-import com.resul.storeapp.CategoryManager;
+import com.resul.storeapp.manager.CategoryManager;
 import com.resul.storeapp.dto.CategoryDto;
 import com.resul.storeapp.dto.CreateCategoryDto;
 import com.resul.storeapp.dto.UpdateCategoryDto;
-import com.resul.storeapp.entity.CategoryEntity;
-import com.resul.storeapp.exception.CategoryNotFoundException;
 import com.resul.storeapp.mapper.CategoryMapper;
 import com.resul.storeapp.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +20,13 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
     private final CategoryManager categoryManager;
 
+    @Cacheable(value = "categories")
     public List<CategoryDto> findAll() {
         var categories = categoryRepository.findAllAndIsActive(true);
         return categoryMapper.toDtoList(categories);
     }
 
+    @Cacheable(value = "categories")
     public CategoryDto findById(Long id) {
         var category = categoryManager.getCategory(id);
         return categoryMapper.toDto(category);
@@ -36,6 +38,7 @@ public class CategoryService {
         categoryRepository.save(categoryEntity);
     }
 
+    @CacheEvict(value = "categories", allEntries = true)
     public void update(Long id, UpdateCategoryDto updateCategoryDto) {
         var categoryEntity = categoryManager.getCategory(id);
         categoryMapper.toCategoryEntity(updateCategoryDto, categoryEntity);

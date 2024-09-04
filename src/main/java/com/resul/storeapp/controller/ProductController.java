@@ -7,10 +7,20 @@ import com.resul.storeapp.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+
+import static com.resul.storeapp.constant.Constant.PHOTO_DIRECTORY;
+import static org.springframework.util.MimeTypeUtils.IMAGE_JPEG_VALUE;
+import static org.springframework.util.MimeTypeUtils.IMAGE_PNG_VALUE;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -63,6 +73,28 @@ public class ProductController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/photo")
+    public ResponseEntity<String> uploadPhoto(@RequestParam("id") Long id, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(productService.uploadPhoto(id, file));
+    }
+
+
+    @GetMapping(value = "/image/{filename}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable("filename") String filename) throws IOException {
+        Path imagePath = Paths.get(PHOTO_DIRECTORY, filename);
+
+        if (!Files.exists(imagePath)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        byte[] imageBytes = Files.readAllBytes(imagePath);
+        String contentType = Files.probeContentType(imagePath);  // Dynamically determine the content type
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(imageBytes);
     }
 
 }
